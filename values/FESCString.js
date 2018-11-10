@@ -122,6 +122,7 @@ export class FESCString {
 
   /**
    * Inserts a string into another one at requested index
+   * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#str_insert-instance_method
    *
    * @param {FESCString} aStr - the source string
    * @param {FESCString} aToBeInserted - the string to insert
@@ -145,7 +146,7 @@ export class FESCString {
     let   index        = aIndex.value;
 
     if (index < 0)
-      index = str.string.length - aIndex;
+      index = str.string.length - index;
     else
       index--;
 
@@ -163,6 +164,7 @@ export class FESCString {
   /**
    * Returns the position of a string into another one. Returns the
    * a FESCNull if not found.
+   * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#str_index-instance_method
    *
    * @param {FESCString} aStr - the source string
    * @param {FESCString} aNeedle - the string to search
@@ -188,6 +190,7 @@ export class FESCString {
 
   /**
    * Returns a upper-case version of the argument string
+   * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#to_upper_case-instance_method
    *
    * @param {FESCString} aStr - the source string
    * @return {FESCString}
@@ -201,6 +204,7 @@ export class FESCString {
 
   /**
    * Returns a upper-case version of the argument string
+   * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#to_lower_case-instance_method
    *
    * @param {FESCString} aStr - the source string
    * @return {FESCString}
@@ -212,7 +216,46 @@ export class FESCString {
     return new FESCString(aStr.string.toLowerCase(), aStr.isQuoted, aStr.quote);
   }
 
+  /**
+   * Extracts a substring from the source string
+   * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#str_slice-instance_method
+   *
+   * @param {FECSString} aStr - the source string
+   * @param {FECSNumber} aStart
+   * @param {FECSNumber} aEnd
+   * @return {FECSString}
+   */
   static str_slice(aStr, aStart, aEnd) {
-    // TODO
+    if (!(aStr instanceof FESCString))
+      throw "FESCString.str_slice: ArgumentError: " + aStr.toString() + " is not a string";
+
+    if (!(aStart instanceof FESCNumber)
+        || aStart.value != Math.floor(aStart.value)
+        || aStart.unit != "")
+      throw "FESCString.str_slice: ArgumentError: " + aStart + " is not a valid integer index";
+
+    if (!aEnd)
+      aEnd = new FESCNumber(-1, "");
+
+    if (!(aEnd instanceof FESCNumber)
+        || aEnd.value != Math.floor(aEnd.value)
+        || aEnd.unit != "")
+      throw "FESCString.str_slice: ArgumentError: " + aEnd + " is not a valid integer index";
+
+    const str = FESCString.unquote(aStr);
+    let start = aStart.value;
+    let end   = aEnd.value;
+
+    if (start < 0)
+      start = str.string.length - start;
+    else
+      start--;
+
+    if (end < 0)
+      end = str.string.length - end;
+    else
+      end--;
+
+    return new FECSString(str.string.substr(start, end), this.isQuoted, this.quote);
   }
 }
