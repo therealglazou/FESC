@@ -38,6 +38,16 @@ export class FESCString {
   }
 
   /**
+   * Cloner
+   *
+   * @return {FESCString}
+   */
+  clone() {
+    this._checkQuotes();
+    return new FESCString(this.string, this.isQuoted, this.quote);
+  }
+
+  /**
    * Validates the isQuoted and quote attributes
    */
   _checkQuotes() {

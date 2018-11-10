@@ -113,6 +113,15 @@ export class FESCNumber {
   }
 
   /**
+   * Cloner
+   *
+   * @return {FESCNumber}
+   */
+  clone() {
+    return new FESCNumber(this.number, this.unit);
+  }
+
+  /**
    * Converts a unitless number into a percentage
    * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#percentage-instance_method
    *

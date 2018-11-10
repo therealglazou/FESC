@@ -28,4 +28,13 @@ export class FESCNull {
   toString() {
     return "null";
   }
+
+  /**
+   * Cloner
+   *
+   * @return {FESCNull}
+   */
+  clone() {
+    return new FESCNull();
+  }
 }

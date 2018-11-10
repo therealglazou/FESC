@@ -62,4 +62,13 @@ export class FESCBoolean {
   toString() {
     return this.boolean ? "true" : "false";
   }
+
+  /**
+   * Cloner
+   *
+   * @return {FESCBoolean}
+   */
+  clone() {
+    return new FESCBoolean(this.boolean);
+  }
 }
