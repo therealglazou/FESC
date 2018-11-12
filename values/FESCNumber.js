@@ -121,6 +121,24 @@ export class FESCNumber {
     return new FESCNumber(this.number, this.unit);
   }
 
+  static validate(aNumber, aCaller) {
+    if (!(aNumber instanceof FESCNumber))
+      throw aCaller + ": ArgumentError: " + aNumber.toString() + " is not a number";
+  }
+
+  static validateUnitless(aNumber, aCaller) {
+    if (!(aNumber instanceof FESCNumber)
+        || aNumber.unit != "")
+      throw aCaller + ": ArgumentError: " + aNumber.toString() + " not a unitless number";
+  }
+
+  static validateUnitlessInteger(aNumber, aCaller) {
+    if (!(aNumber instanceof FESCNumber)
+        || aNumber.value != Math.floor(aNumber.value)
+        || aNumber.unit != "")
+      throw aCaller + ": ArgumentError: " + aNumber.toString() + " not a unitless integer";
+  }
+
   /**
    * Converts a unitless number into a percentage
    * Cf. https://sass-lang.com/documentation/Sass/Script/Functions.html#percentage-instance_method
@@ -129,9 +147,7 @@ export class FESCNumber {
    * @param {FESCNumber}
    */
   static percentage(aNumber) {
-    if (!(aNumber instanceof FESCNumber)
-        || aNumber.unit != "")
-      throw "FESCNumber.percentage: ArgumentError: not a unitless number";
+    FESCNumber.validateUnitless(aNumber, "FESCNumber.percentage");
 
     return new FESCNumber(aNumber.number * 100, "%");
   }
@@ -144,8 +160,7 @@ export class FESCNumber {
    * @param {FESCNumber}
    */
   static round(aNumber) {
-    if (!(aNumber instanceof FESCNumber))
-      throw "FESCNumber.round: ArgumentError: not a number";
+    FESCNumber.validate(aNumber, "FESCNumber.round");
 
     return new FESCNumber(Math.round(aNumber.number), aNumber.unit);
   }
@@ -158,8 +173,7 @@ export class FESCNumber {
    * @param {FESCNumber}
    */
   static ceil(aNumber) {
-    if (!(aNumber instanceof FESCNumber))
-      throw "FESCNumber.ceil: ArgumentError: not a number";
+    FESCNumber.validate(aNumber, "FESCNumber.ceil");
 
     return new FESCNumber(Math.ceil(aNumber.number), aNumber.unit);
   }
@@ -172,8 +186,7 @@ export class FESCNumber {
    * @param {FESCNumber}
    */
   static floor(aNumber) {
-    if (!(aNumber instanceof FESCNumber))
-      throw "FESCNumber.floor: ArgumentError: not a number";
+    FESCNumber.validate(aNumber, "FESCNumber.floor");
 
     return new FESCNumber(Math.floor(aNumber.number), aNumber.unit);
   }
@@ -186,8 +199,7 @@ export class FESCNumber {
    * @param {FESCNumber}
    */
   static abs(aNumber) {
-    if (!(aNumber instanceof FESCNumber))
-      throw "FESCNumber.abs: ArgumentError: not a number";
+    FESCNumber.validate(aNumber, "FESCNumber.abs");
 
     return new FESCNumber(Math.abs(aNumber.number), aNumber.unit);
   }
@@ -201,8 +213,7 @@ export class FESCNumber {
    */
   static min(...aNumbers) {
     aNumbers.forEach((aNumber) => {
-      if (!(aNumber instanceof FESCNumber))
-        throw "FESCNumber.min: ArgumentError: not a number";
+      FESCNumber.validate(aNumber, "FESCNumber.min");
       if (aNumber.unit != aNumbers[0].unit)
         throw "FESCNumber.min: ArgumentError: different units";
     });
@@ -220,8 +231,7 @@ export class FESCNumber {
    */
   static max(...aNumbers) {
     aNumbers.forEach((aNumber) => {
-      if (!(aNumber instanceof FESCNumber))
-        throw "FESCNumber.max: ArgumentError: not a number";
+      FESCNumber.validate(aNumber, "FESCNumber.max");
       if (aNumber.unit != aNumbers[0].unit)
         throw "FESCNumber.max: ArgumentError: different units";
     });
@@ -237,8 +247,8 @@ export class FESCNumber {
    * @param {FESCNumber|null} aLimit - optional limit; default is 1 
    */
   static random(aLimit) {
-    if (aLimit && !(aLimit instanceof FESCNumber))
-      throw "FESCNumber.random: ArgumentError: not a number";
+    if (aLimit)
+      FESCNumber.validate(aLimit, "FESCNumber.random");
 
     if (aLimit)
       return new FSCENumber(1 + Math.floor(aLimit.number * Math.random()), "");

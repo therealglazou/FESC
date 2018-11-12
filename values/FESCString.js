@@ -10,7 +10,7 @@
 /**
  * Class for SCSS strings
  */
-export class FESCString {
+export class FESCString extends FECSValue {
 
   /**
    * Constructor
@@ -34,7 +34,9 @@ export class FESCString {
    * @return {string}
    */
   toString() {
-    return aDelimitor + this.string + aDelimitor;
+    return this.isQuoted
+           ? aDelimitor + this.string + aDelimitor
+           : this.string;
   }
 
   /**
@@ -45,6 +47,11 @@ export class FESCString {
   clone() {
     this._checkQuotes();
     return new FESCString(this.string, this.isQuoted, this.quote);
+  }
+
+  static validate(aStr, aCaller) {
+    if (!(aStr instanceof FESCString))
+      throw aCaller + ": ArgumentError: " + aStr.toString() + " is not a string";
   }
 
   /**
@@ -72,8 +79,7 @@ export class FESCString {
    * @return {FESCString}
    */
   static unquote(aStr) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.unquote: ArgumentError: " + aStr.toString() + " is not a string";
+    FESCString.validate(aStr, "FESCString.unquote");
 
     aStr._checkQuotes();
     if (aStr.isQuoted) {
@@ -91,8 +97,7 @@ export class FESCString {
    * @return {FESCString}
    */
   static quote(aStr) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.quote: ArgumentError: " + aStr.toString() + " is not a string";
+    FESCString.validate(aStr, "FESCString.quote");
 
     aStr._checkQuotes();
     if (aStr.isQuoted) {
@@ -110,8 +115,7 @@ export class FESCString {
    * @return {FESCNumber}
    */
   static str_length(aStr) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.str_length: ArgumentError: " + aStr.toString() + " is not a string";
+    FESCString.validate(aStr, "FESCString.str_length");
 
     aStr._checkQuotes();
     if (aStr.isQuoted)
@@ -130,16 +134,9 @@ export class FESCString {
    * @return {FESCString}
    */
   static str_insert(aStr, aToBeInserted, aIndex) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.str_insert: ArgumentError: " + aStr.toString() + " is not a string";
-
-    if (!(aToBeInserted instanceof FESCString))
-      throw "FESCString.str_insert: ArgumentError: " + aToBeInserted.toString() + " is not a string";
-
-    if (!(aIndex instanceof FESCNumber)
-        || aIndex.value != Math.floor(aIndex.value)
-        || aIndex.unit != "")
-      throw "FESCString.str_insert: ArgumentError: " + aIndex + " is not a valid integer index";
+    FESCString.validate(aStr, "FESCString.str_insert");
+    FESCString.validate(aToBeInserted, "FESCString.str_insert");
+    FESCNumber.validateUnitlessInteger(aIndex, "FESCString.str_insert");
 
     const str          = FESCString.unquote(aStr);
     const toBeInserted = FESCString.unquote(aToBeInserted);
@@ -171,11 +168,8 @@ export class FESCString {
    * @return {FESCNumber|FESCNull}
    */
   static str_index(aStr, aNeedle) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.str_index: ArgumentError: " + aStr.toString() + " is not a string";
-
-    if (!(aNeedle instanceof FESCString))
-      throw "FESCString.str_index: ArgumentError: " + aNeedle.toString() + " is not a string";
+    FESCString.validate(aStr, "FESCString.str_index");
+    FESCString.validate(aNeedle, "FESCString.str_index");
 
     const str    = FESCString.unquote(aStr);
     const needle = FESCString.unquote(aNeedle);
@@ -196,8 +190,7 @@ export class FESCString {
    * @return {FESCString}
    */
   static to_upper_case(aStr) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.to_upper_case: ArgumentError: " + aStr.toString() + " is not a string";
+    FESCString.validate(aStr, "FESCString.to_upper_case");
 
     return new FESCString(aStr.string.toUpperCase(), aStr.isQuoted, aStr.quote);
   }
@@ -210,8 +203,7 @@ export class FESCString {
    * @return {FESCString}
    */
   static to_lower_case(aStr) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.to_lower_case: ArgumentError: " + aStr.toString() + " is not a string";
+    FESCString.validate(aStr, "FESCString.to_lower_case");
 
     return new FESCString(aStr.string.toLowerCase(), aStr.isQuoted, aStr.quote);
   }
@@ -226,21 +218,13 @@ export class FESCString {
    * @return {FECSString}
    */
   static str_slice(aStr, aStart, aEnd) {
-    if (!(aStr instanceof FESCString))
-      throw "FESCString.str_slice: ArgumentError: " + aStr.toString() + " is not a string";
-
-    if (!(aStart instanceof FESCNumber)
-        || aStart.value != Math.floor(aStart.value)
-        || aStart.unit != "")
-      throw "FESCString.str_slice: ArgumentError: " + aStart + " is not a valid integer index";
+    FESCString.validate(aStr, "FESCString.str_slice");
+    FESCNumber.validateUnitlessInteger(aStart, "FESCString.str_slice")
 
     if (!aEnd)
       aEnd = new FESCNumber(-1, "");
 
-    if (!(aEnd instanceof FESCNumber)
-        || aEnd.value != Math.floor(aEnd.value)
-        || aEnd.unit != "")
-      throw "FESCString.str_slice: ArgumentError: " + aEnd + " is not a valid integer index";
+    FESCNumber.validateUnitlessInteger(aEnd, "FESCString.str_slice")
 
     const str = FESCString.unquote(aStr);
     let start = aStart.value;
