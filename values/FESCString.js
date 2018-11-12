@@ -7,10 +7,13 @@
  * Original author: Daniel Glazman
  */
 
+import {FESCValue} from "./FESCValue.js";
+import {FESCNumber} from "./FESCNumber.js";
+
 /**
  * Class for SCSS strings
  */
-export class FESCString extends FECSValue {
+export class FESCString extends FESCValue {
 
   /**
    * Constructor

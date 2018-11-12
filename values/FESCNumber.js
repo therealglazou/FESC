@@ -7,10 +7,12 @@
  * Original author: Daniel Glazman
  */
 
+import {FESCValue} from "./FESCValue.js";
+
 /**
  * Class for SCSS numbers
  */
-export class FESCNumber {
+export class FESCNumber extends FESCValue {
 
   /**
    * Getter for valid units
